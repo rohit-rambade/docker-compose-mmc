@@ -1,0 +1,45 @@
+version: '3'
+services:
+  db:
+    container_name: mmc-db
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: mmc
+      POSTGRES_PASSWORD: mmc@121
+      POSTGRES_DB: mmc
+    ports:
+     - 5432:5432
+    volumes:
+      - ./scripts:/docker-entrypoint-initdb.d
+      - mmcdb:/var/lib/postgresql/data  
+
+  backend:
+    container_name: mmc-backend
+    build:
+      context: .
+      dockerfile: Dockerfile    
+    ports:
+      - 3000:3000
+    environment:
+      DB_USER: mmc
+      DB_PASSWORD: mmc@121
+      DB_HOST: db
+      DB_DATABASE: mmc
+      PORT: 3000
+      JWT_MENTOR: mentorss
+      JWT_MENTEE: sjfdsfd
+    depends_on: 
+     - db  
+  pgAdmin:
+    image: dpage/pgadmin4
+    restart: always
+    ports:
+      - 5433:80
+    environment: 
+      PGADMIN_DEFAULT_EMAIL: rohitrambade1@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: rohit@121  
+    depends_on: 
+     - db 
+volumes:
+  mmcdb:     
